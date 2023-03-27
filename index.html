@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container">
+        <canvas id="myChart">
+            <h1>42</h1>
+        </canvas>
+    </div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   
+     <!-- use version 0.19.2 -->
+<script  src="https://cdn.sheetjs.com/xlsx-0.19.2/package/dist/xlsx.full.min.js"></script>
+     <!-- <script src="chartjs-plugin-datasource.min.js"></script> -->
+    <script>
+
+
+    
+
+           
+        
+        
+        // const centerText={
+        //     id:'centerText',
+        //     afterDatasetsDraw(chart,args,option){
+        //         // console.log(chart);
+        //         const {ctx,data}=chart;
+        //         ctx.save()
+        //         ctx.font="bold 16px Inter,Arial, sans-serif";
+        //         const text='50%'
+        //         console.log(text);
+        //         function calcCenter(w,h){
+        //             const{width,height}=chart.chartArea;
+        //             return{
+        //                 x:width/2-w/2,
+        //                 y:height/2-h/2,
+        //                 w,
+        //                 h
+        //             }
+        //         }
+        //         const {x,y}=calcCenter(30,-5)
+        //         // ctx.fillRect(x,y,w,h)
+        //         ctx.fillStyle ='#003d96'
+        //         ctx.fillText(text,x,y)
+        //         ctx.restore()
+                
+        //     }
+        // };
+         
+        // const config={
+        //     type:'doughnut',
+        //     data: {
+        //     labels: ['42%'],
+        //     datasets: [{
+        //         label: '# of Votes',
+        //         data: [58,42],
+                
+        //         backgroundColor:['#f0f0f0','#003d96']
+        //     }]
+        //     },
+        //     plugins:[centerText], 
+        //     options: {
+        //         cutout:'80%',
+        //         plugins:{
+                    
+        //             tooltip: {
+        //                 enabled: false // <-- this option disables tooltips
+        //             },
+        //             grid:{
+        //                 display:false
+        //             },
+        //             legend: {
+        //             display: false,
+        //         },
+        //         },
+        //     },
+            
+        // }
+
+        
+        const ctx=document.querySelector("#myChart").getContext('2d');
+        
+        // new Chart(ctx, config);
+        class PieChart{
+            config={
+                type:"doughnut",
+                data:{
+                    datasets:[]
+                }
+            }
+            constructor(elem,info) {
+                const mountElem=document.querySelector(elem)
+                const {bgColor,color,cutout,value,myClasses,datasets}=info;
+                mountElem.classList.add(myClasses)
+                const centerText={
+                    id:'centerText',
+                afterDatasetsDraw(chart,args,option){
+                const {ctx,data}=chart;
+                ctx.save()
+                ctx.font="bold 16px Inter,Arial, sans-serif";
+                const text=value+"%"
+                console.log(text);
+                function calcCenter(w,h){
+                    const{width,height}=chart.chartArea;
+                    return{
+                        x:width/2-w/2,
+                        y:height/2-h/2,
+                        w,
+                        h
+                    }
+                }
+                const {x,y}=calcCenter(25,-5)
+                
+                ctx.fillStyle =color||'#003d96'
+                ctx.fillText(text,x,y)
+                
+            }
+                }
+                this.config.data={
+                    labels: [`${value}%`],
+                    datasets:datasets|| [{
+                    data: [100-value,value],
+                    backgroundColor:['transparent',bgColor||'#003d96']
+                }]
+                }
+                this.config.plugins=[centerText];
+                this.config.options={
+                    cutout:cutout||"80%",
+                    plugins:{
+                    
+                    tooltip: {
+                        enabled: false // <-- this option disables tooltips
+                    },
+                    grid:{
+                        display:false
+                    },
+                    legend: {
+                    display: false,
+                },
+                },
+                }
+                new Chart(mountElem.getContext('2d'),this.config)
+                
+            }
+            
+        }
+        
+
+        const config={
+            value:68,
+            myClasses:'chart1'
+        }
+        new PieChart('#myChart',config)
+    
+    </script>
+</body>
+</html>
